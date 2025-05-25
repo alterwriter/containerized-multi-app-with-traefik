@@ -1,0 +1,43 @@
+services:
+  nginxctf:
+    image: nginx:stable
+    container_name: nginxctf
+    restart: always
+    volumes:
+      - <HOME_PATH>/ctfd/conf/nginx/http.conf:/etc/nginx/nginx.conf
+    networks:
+      - ctf_traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginxctf.rule=Host(`ctf.<mydomain>.com`)"
+      - "traefik.http.routers.nginxctf.entrypoints=websecure"
+      - "traefik.http.routers.nginxctf.tls.certresolver=myresolver"
+      
+  grafana:
+    build:
+      context: <HOME_PATH>/grafana-lab/compose/grafana/
+    container_name: grafana
+    restart: always
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      - GF_AUTH_BASIC_ENABLED=false
+      - GF_ENABLE_GZIP=true
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - grafana_traefik_proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.<mydomain>.com`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls.certresolver=myresolver"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+
+volumes:
+  grafana-data:
+  
+networks:
+  ctf_traefik_proxy:
+    external: true
+  grafana_traefik_proxy:
+    external: true
