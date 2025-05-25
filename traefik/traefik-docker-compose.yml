@@ -1,0 +1,25 @@
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./traefik.yml:/traefik.yml:ro
+      - ./acme.json:/acme.json
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - --configFile=/traefik.yml
+      - --log.level=DEBUG
+      - --accesslog=true
+    networks:
+      - ctf_traefik_proxy
+      - grafana_traefik_proxy
+
+networks:
+  ctf_traefik_proxy:
+    external: true
+  grafana_traefik_proxy:
+    external: true
