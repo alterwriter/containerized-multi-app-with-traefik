@@ -1,0 +1,15 @@
+services:
+  ctfapp-sample:
+    image: alpine:latest
+    restart: always
+    ports:
+      - 8000
+    networks:
+      - internal
+      - ctf_traefik_proxy
+
+networks:
+  internal:
+    internal: true
+  ctf_traefik_proxy:
+    external: true
