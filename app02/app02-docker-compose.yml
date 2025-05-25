@@ -1,0 +1,15 @@
+services:
+  grafana-sample:
+    image: grafana:latest
+    restart: always
+    ports:
+      - 3000
+    networks:
+      - internal
+      - grafana_traefik_proxy
+
+networks:
+  internal:
+    internal: true
+  grafana_traefik_proxy:
+    external: true
